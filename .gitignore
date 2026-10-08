@@ -4,3 +4,8 @@ Thumbs.db
 .claude/
 .vscode/
 .idea/
+
+# SSL 证书与私钥，禁止提交到公共仓库
+certs/
+*.pem
+*.key

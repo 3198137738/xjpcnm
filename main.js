@@ -26,11 +26,11 @@
       const base = Math.min(h * 0.55, 720);
       const rise = Math.min(h * 0.32, 440);
       const grad = ctx.createLinearGradient(0, 0, w, 0);
-      grad.addColorStop(0, 'rgba(255,255,255,0.9)');
-      grad.addColorStop(0.3, 'rgba(120,140,255,0.9)');
-      grad.addColorStop(0.5, 'rgba(160,120,255,0.25)');
-      grad.addColorStop(0.7, 'rgba(120,140,255,0.9)');
-      grad.addColorStop(1, 'rgba(255,255,255,0.9)');
+      grad.addColorStop(0, 'rgba(255,255,255,0.75)');
+      grad.addColorStop(0.3, 'rgba(200,200,220,0.55)');
+      grad.addColorStop(0.5, 'rgba(150,130,255,0.12)');
+      grad.addColorStop(0.7, 'rgba(200,200,220,0.55)');
+      grad.addColorStop(1, 'rgba(255,255,255,0.75)');
       ctx.strokeStyle = grad;
       for (let i = 0; i < LINES; i++) {
         const k = i / (LINES - 1);
