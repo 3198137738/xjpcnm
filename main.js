@@ -208,10 +208,16 @@
     if (d.open) faqs.forEach((o) => o !== d && (o.open = false));
   }));
 
-  // 联系表单（前端校验，暂未接入后端）
+  // 联系表单：校验后提交。
+  // 若 <form> 配置了 data-endpoint，则以 JSON POST 到该地址；
+  // 未配置时打开用户的邮件客户端并预填内容，避免数据静默丢失。
   const form = $('#contactForm');
   const msg = $('#formMsg');
-  form?.addEventListener('submit', (e) => {
+  const setMsg = (text, cls = '') => {
+    msg.className = `form-msg ${cls}`.trim();
+    msg.textContent = text;
+  };
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = form.elements.name;
     const email = form.elements.email;
@@ -223,13 +229,50 @@
       if (!valid) ok = false;
     });
     if (!ok || !products.length) {
-      msg.className = 'form-msg err';
-      msg.textContent = !ok ? 'Please enter your name and a valid work email.' : 'Please select at least one area of interest.';
+      setMsg(!ok ? 'Please enter your name and a valid work email.' : 'Please select at least one area of interest.', 'err');
       return;
     }
-    msg.className = 'form-msg';
-    msg.textContent = `Thanks, ${name.value.trim()}. Our team will reach out within one business day.`;
-    form.reset();
+
+    const payload = {
+      name: name.value.trim(),
+      email: email.value.trim(),
+      company: form.elements.company.value.trim(),
+      size: form.elements.size.value,
+      products: products.map((p) => p.value),
+      message: form.elements.message.value.trim(),
+    };
+
+    const endpoint = form.dataset.endpoint;
+    if (endpoint) {
+      setMsg('Sending…');
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        setMsg(`Thanks, ${payload.name}. Our team will reach out within one business day.`);
+        form.reset();
+      } catch {
+        setMsg('Something went wrong. Please email sales@xjpcnm.com directly.', 'err');
+      }
+      return;
+    }
+
+    // 未配置后端：通过邮件客户端发送，表单内容保留，方便用户确认后再发
+    const body = [
+      `Name: ${payload.name}`,
+      `Work email: ${payload.email}`,
+      `Company: ${payload.company}`,
+      `Company size: ${payload.size}`,
+      `Interested in: ${payload.products.join(', ')}`,
+      '',
+      payload.message,
+    ].join('\n');
+    const subject = `Demo request from ${payload.name}`;
+    location.href = `mailto:sales@xjpcnm.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    setMsg('Your email app should open with your request. If it did not, please email sales@xjpcnm.com directly.');
   });
 
   $('#year').textContent = new Date().getFullYear();

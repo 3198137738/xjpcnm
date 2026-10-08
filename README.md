@@ -65,7 +65,7 @@ docker compose up -d --build  # 修改代码后重新构建并启动
 ## 上线前待办
 
 - [ ] 在 `privacy.html` 和 `terms.html` 中填写黄色虚线标出的公司信息，并请律师审阅
-- [ ] 接通联系表单后端（目前仅做前端校验）
+- [ ] 接通联系表单后端：在 `index.html` 的 `<form id="contactForm">` 上添加 `data-endpoint="https://你的接口"`，接口需接收 JSON POST 并返回 2xx。未配置时，表单会打开用户的邮件客户端并预填内容发给 `sales@xjpcnm.com`
 - [ ] 开通 `sales@`、`support@`、`privacy@`、`legal@`、`security@` 邮箱
 - [ ] 将价格、SLA 等占位内容替换为真实信息
 - [ ] 生产环境建议在前面加 HTTPS 反向代理（如 Caddy、Nginx 或 Cloudflare）
