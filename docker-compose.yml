@@ -1,0 +1,10 @@
+services:
+  web:
+    build: .
+    image: xjpcnm-web:latest
+    container_name: xjpcnm-web
+    ports:
+      - "8085:8085"
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
